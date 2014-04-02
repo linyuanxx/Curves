@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>BSpline Reconstruction</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="readaction"/>
+   </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>Operation</string>
+    </property>
+    <widget class="QMenu" name="menuBsurface">
+     <property name="title">
+      <string>Bsurface</string>
+     </property>
+     <addaction name="actionsurodinary"/>
+     <addaction name="actionBubble_2"/>
+    </widget>
+    <widget class="QMenu" name="menuBspline">
+     <property name="title">
+      <string>Bspline</string>
+     </property>
+     <addaction name="actionOrdinary"/>
+     <addaction name="actionBubble"/>
+    </widget>
+    <addaction name="menuBspline"/>
+    <addaction name="menuBsurface"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>About</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuSet">
+    <property name="title">
+     <string>Set</string>
+    </property>
+    <addaction name="actionParam_dialog"/>
+   </widget>
+   <widget class="QMenu" name="menuGLShow">
+    <property name="title">
+     <string>GLShow</string>
+    </property>
+    <addaction name="actioncontour"/>
+    <addaction name="actionSource"/>
+    <addaction name="actionClear"/>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="menu_2"/>
+   <addaction name="menuSet"/>
+   <addaction name="menuGLShow"/>
+   <addaction name="menuAbout"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="readaction">
+   <property name="text">
+    <string>Read</string>
+   </property>
+  </action>
+  <action name="actionOrdinary">
+   <property name="text">
+    <string>ordinary</string>
+   </property>
+  </action>
+  <action name="actionBubble">
+   <property name="text">
+    <string>bubble</string>
+   </property>
+  </action>
+  <action name="actionsurodinary">
+   <property name="text">
+    <string>ordinary</string>
+   </property>
+  </action>
+  <action name="actionBubble_2">
+   <property name="text">
+    <string>bubble</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>about</string>
+   </property>
+  </action>
+  <action name="actionParam_dialog">
+   <property name="text">
+    <string>param dialog</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="text">
+    <string>clear</string>
+   </property>
+  </action>
+  <action name="actioncontour">
+   <property name="text">
+    <string>contour</string>
+   </property>
+  </action>
+  <action name="actionSource">
+   <property name="text">
+    <string>source</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
