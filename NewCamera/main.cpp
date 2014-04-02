@@ -15,6 +15,8 @@ int main(int argc, char *argv[])
 //    glf.setPoint(pt);
 //    glf.show();
 
+
+
     MainWindow mw;
     mw.show();
     return a.exec();
