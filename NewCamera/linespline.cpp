@@ -8,7 +8,7 @@ LineSpline::LineSpline()
 {
     this->n = 3;
     this->p = 3;
-    this->MinSrcN = 50;
+    this->MinSrcN = 3;
     this->_distance = 5.1;
 }
 
@@ -37,9 +37,8 @@ void LineSpline::getKnot(QVector<float> &kt)
     kt = this->_kt;
 }
 
-void LineSpline::calKnot()
+void LineSpline::calDu()
 {
-    this->_kt.clear();
     this->du.clear();
     QVector3D dvt;
     float L = 0.f;
@@ -55,7 +54,12 @@ void LineSpline::calKnot()
         du.push_back(du[i-1]+dvt.length()/L);
     }
     du.push_back(1.f);
+}
 
+void LineSpline::calKnot()
+{
+    this->calDu();
+    this->_kt.clear();
     //Tiller and Pigger 的节点矢量二次均衡方法
     // n+1 为控制点的个数；
     float *um = (float*)malloc(sizeof(float)*(n+p+2));
@@ -242,6 +246,7 @@ void LineSpline::knotnumFitting(QVector<float> dn, int num)
         return;
     this->n = num;
     this->_kt = dn;
+    this->calDu();
     this->calApproxi();
 }
 

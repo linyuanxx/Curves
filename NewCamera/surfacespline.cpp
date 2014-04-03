@@ -1,5 +1,6 @@
 #include "surfacespline.h"
-
+#include <QMap>
+#include <QDebug>
 SurfaceSpline::SurfaceSpline()
 {
     this->_tolerance = 5.f;
@@ -23,7 +24,7 @@ void SurfaceSpline::approxSurface()
 {
     QVector<QVector3D> ct;
     // fisrt fitting;
-    for(int i=1; i<_sp.size(); i++)
+    for(int i=0; i<_sp.size(); i++)
     {
         ct.clear();
         linefunction.setPoint(_sp[i]);
@@ -34,22 +35,34 @@ void SurfaceSpline::approxSurface()
             linefunction.getKnot(_hkt);
         }else
         {
-            linefunction.knotnumFitting(_hkt, _sp[0].size()-1);
+            linefunction.knotnumFitting(_hkt, _cp[0].size()-1);
             linefunction.getControlPoints(ct);
         }
+
         _cp.push_back(ct);
     }
-    ct.clear();
     // second fitting
     for(int i=0; i<_cp[0].size(); i++)
     {
+        // y direction;
         QVector<QVector3D> vl;
+        QVector3D svp;
+        QMap<float, QVector3D> map;
         for(int k=0; k<_cp.size(); k++)
         {
-            vl.push_back(_cp.at(k).at(i));
+            svp = _cp.at(k).at(i);
+            map.insert(svp.y(), svp);
+            //vl.push_back(_cp.at(k).at(i));
+        }
+
+        QMapIterator<float, QVector3D>imp(map);
+        while(imp.hasNext())
+        {
+            vl.push_back(imp.next().value());
         }
         ct.clear();
         linefunction.setPoint(vl);
+
         if(i == 0)
         {
             linefunction.toleranceFitting(_tolerance);
@@ -76,15 +89,16 @@ void SurfaceSpline::statisticSurface()
 
 void SurfaceSpline::ordinarySurface(QLinkedList<QVector3D> &ap)
 {
+    this->approxSurface();
     QVector<float> dvm;
     QVector<float> dhm;
     for(float sv=0.f; sv <= 1.f; sv += 0.01f)
     {
-        linefunction.setKnot(this->_vkt, this->_cp.size()-1);
+        linefunction.setKnot(this->_vkt, this->_vcp.size()-1);
         linefunction.calNi(sv,dvm);
         for(float sh=0.f; sh <= 1.f; sh += 0.01f)
         {
-            linefunction.setKnot(this->_hkt, this->_cp.at(0).size()-1);
+            linefunction.setKnot(this->_hkt, this->_vcp.at(0).size()-1);
             linefunction.calNi(sh, dhm);
             float x, y, z;
             x=y=z=0.f;
@@ -93,9 +107,10 @@ void SurfaceSpline::ordinarySurface(QLinkedList<QVector3D> &ap)
                 for(int dhi=0; dhi<dhm.size(); dhi++)
                 {
                     float tm = dvm[dvi]*dhm[dhi];
-                    x += _cp[dvi][dhi].x()* tm;
-                    y += _cp[dvi][dhi].y()* tm;
-                    z += _cp[dvi][dhi].z()* tm;
+                    QVector3D tv = _vcp[dvi][dhi];
+                    x += tv.x()* tm;
+                    y += tv.y()* tm;
+                    z += tv.z()* tm;
                 }
             }
             ap.push_back(QVector3D(x, y, z));

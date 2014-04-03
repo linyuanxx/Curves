@@ -36,6 +36,7 @@ public:
     void calNi2(float um, QVector<float> &ni);
 private:
     //曲线 基本组成元素计算
+    void calDu();  // 计算数据源点对应的参数值；
     void calKnot(); //计算节点矢量；
     void calApproxi();
     QVector3D pointOnCurves(float s); //输入参数计算点；

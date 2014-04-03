@@ -22,6 +22,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionOrdinary, SIGNAL(triggered()), this, SLOT(ordinaryLine()));
     //bspline bubble line
     connect(this->ui->actionBubble, SIGNAL(triggered()), this, SLOT(bubbleLine()));
+
+    //bspline surface
+    connect(this->ui->actionsurodinary, SIGNAL(triggered()), this, SLOT(ordinarySurface()));
+    //bspline bubble surface
+    connect(this->ui->actionBubble_2, SIGNAL(triggered()), this, SLOT(bubbleSurface()));
 }
 
 MainWindow::~MainWindow()
@@ -81,7 +86,10 @@ void MainWindow::bubbleLine()
 
 void MainWindow::ordinarySurface()
 {
-
+    QLinkedList<QVector3D> ap;
+    this->surfbs.inputData(contour);
+    this->surfbs.ordinarySurface(ap);
+    this->glf->setPoint(ap);
 }
 
 void MainWindow::bubbleSurface()
