@@ -151,16 +151,17 @@ void SurfaceSpline::BoxDiv(CenterBox cb)
     vertice[3] = paramToPoint(cb.ru.x, cb.ld.y);
     vertice[4] = paramToPoint(cb.ld.x, cb.ld.y);
     float length[4];
-    float mlength = 0.f;
+    float mlength = 32767.f;
     QVector3D lev;
-    for(int i=1; i<5; i++)
+    for(int i=1; i<4; i++)
     {
         lev = vertice[i]-vertice[i-1];
         length[i-1] = lev.length();
-        if(length[i-1] > mlength)
+        if(length[i-1] < mlength)
             mlength = length[i-1];
     }
-    if(mlength < 0.1)return;
+    // qDebug()<<"LLL: "<<_bbv.size();
+    if(mlength < 1.0)return;
     else
     {
         BoxDiv(CenterBox(cb.ld, cb.getCenter())); //ld
@@ -176,7 +177,10 @@ void SurfaceSpline::BoxDiv(CenterBox cb)
 void SurfaceSpline::bubbleSurface(QLinkedList<QVector3D> &ap)
 {
     ap.clear();
+    this->approxSurface();
+    qDebug()<<_bbv.size();
     this->BoxDiv(CenterBox(Point(0,0), Point(1.f, 1.f)));
+
     for(int i=0; i<_bbv.size(); i++)
         ap.push_back(_bbv[i]);
 }

@@ -94,5 +94,8 @@ void MainWindow::ordinarySurface()
 
 void MainWindow::bubbleSurface()
 {
-
+    QLinkedList<QVector3D> ap;
+    this->surfbs.inputData(contour);
+    this->surfbs.bubbleSurface(ap);
+    this->glf->setPoint(ap);
 }
