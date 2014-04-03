@@ -118,7 +118,65 @@ void SurfaceSpline::ordinarySurface(QLinkedList<QVector3D> &ap)
     }
 }
 
+QVector3D SurfaceSpline::paramToPoint(float u, float v)
+{
+    QVector<float>dvm, dhm;
+    linefunction.setKnot(this->_vkt, this->_vcp.size()-1);
+    linefunction.calNi(v, dvm);
+    linefunction.setKnot(this->_hkt, this->_vcp.size()-1);
+    linefunction.calNi(u, dhm);
+
+    float x, y, z;
+    x=y=z=0.f;
+    for(int dvi=0; dvi<dvm.size(); dvi++)
+    {
+        for(int dhi=0; dhi<dhm.size(); dhi++)
+        {
+            float tm = dvm[dvi]*dhm[dhi];
+            QVector3D tv = _vcp[dvi][dhi];
+            x += tv.x()* tm;
+            y += tv.y()* tm;
+            z += tv.z()* tm;
+        }
+    }
+    return QVector3D(x, y, z);
+}
+
+void SurfaceSpline::BoxDiv(CenterBox cb)
+{
+    QVector3D vertice[5];
+    vertice[0] = paramToPoint(cb.ld.x, cb.ld.y);
+    vertice[1] = paramToPoint(cb.ld.x, cb.ru.y);
+    vertice[2] = paramToPoint(cb.ru.x, cb.ru.y);
+    vertice[3] = paramToPoint(cb.ru.x, cb.ld.y);
+    vertice[4] = paramToPoint(cb.ld.x, cb.ld.y);
+    float length[4];
+    float mlength = 0.f;
+    QVector3D lev;
+    for(int i=1; i<5; i++)
+    {
+        lev = vertice[i]-vertice[i-1];
+        length[i-1] = lev.length();
+        if(length[i-1] > mlength)
+            mlength = length[i-1];
+    }
+    if(mlength < 0.1)return;
+    else
+    {
+        BoxDiv(CenterBox(cb.ld, cb.getCenter())); //ld
+        BoxDiv(CenterBox(Point(cb.ld.x, cb.getCenter().y), Point(cb.getCenter().x, cb.ru.y))); //lu
+        BoxDiv(CenterBox(cb.getCenter(), cb.ru)); //ru
+        BoxDiv(CenterBox(Point(cb.getCenter().x, cb.ld.y), Point(cb.ru.x, cb.getCenter().y))); //rd
+
+        for(int i=0; i<4; i++)
+            _bbv.push_back(vertice[i]);
+    }
+}
+
 void SurfaceSpline::bubbleSurface(QLinkedList<QVector3D> &ap)
 {
-
+    ap.clear();
+    this->BoxDiv(CenterBox(Point(0,0), Point(1.f, 1.f)));
+    for(int i=0; i<_bbv.size(); i++)
+        ap.push_back(_bbv[i]);
 }
