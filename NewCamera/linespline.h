@@ -15,6 +15,9 @@ public:
     //输入节点矢量与控制点个数-1；
     void setKnot(const QVector<float> kt, int np);
 
+    // parameter set;
+     void setDistance(float dis);
+     void setOsteps(float tep);
     //output:
     //给定一个容差值进行拟合
     void toleranceFitting(float tolerance);
@@ -58,6 +61,7 @@ private:
 
     int MinSrcN; // most min number of the source data;
     //output:
+    float _osteps;
     float _distance;
     QVector<QVector3D> _ap; //临时存储输出bubble数据点。
 };

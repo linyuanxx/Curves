@@ -28,22 +28,23 @@ LIBS += -lglut -lGLU
 SOURCES += main.cpp\
         widget.cpp \
     loadfile.cpp \
-    approximation.cpp \
     linespline.cpp \
     bspline_function.cpp \
     surfacespline.cpp \
     glform.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    pmdialog.cpp
 
 HEADERS  += widget.h \
     loadfile.h \
-    approximation.h \
     linespline.h \
     bspline_function.h \
     surfacespline.h \
     glform.h \
-    mainwindow.h
+    mainwindow.h \
+    pmdialog.h
 
 FORMS    += widget.ui \
     glform.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    pmdialog.ui

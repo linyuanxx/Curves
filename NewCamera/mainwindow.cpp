@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     glf = new GLForm;
     this->setCentralWidget(glf);
 
+    this->pm = new PmDialog;
     //读入文件；
     connect(this->ui->readaction, SIGNAL(triggered()), this, SLOT(fileRead()));
     //清空显示数据；
@@ -27,6 +28,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionsurodinary, SIGNAL(triggered()), this, SLOT(ordinarySurface()));
     //bspline bubble surface
     connect(this->ui->actionBubble_2, SIGNAL(triggered()), this, SLOT(bubbleSurface()));
+
+    //paramter widget;
+    connect(this->ui->actionParam_dialog, SIGNAL(triggered()), this, SLOT(showDialog()));
+
 }
 
 MainWindow::~MainWindow()
@@ -56,6 +61,11 @@ void MainWindow::showContour()
 
 void MainWindow::ordinaryLine()
 {
+    disconnect(this->pm, SIGNAL(ovalueChanged(float)), this, SLOT(redisplayosurface(float)));
+    disconnect(this->pm, SIGNAL(bbvalueChanged(float)), this, SLOT(redisplaybsurface(float)));
+    //disconnect(this->pm, SIGNAL(ovalueChanged(float)), this, SLOT(redisplayoline(float)));
+    disconnect(this->pm, SIGNAL(bbvalueChanged(float)), this, SLOT(redisplaybline(float)));
+    connect(this->pm, SIGNAL(ovalueChanged(float)), this, SLOT(redisplayoline(float)));
     QLinkedList<QVector3D> ap;
     for(int i=0; i<contour.size(); i++)
     {
@@ -71,6 +81,11 @@ void MainWindow::ordinaryLine()
 
 void MainWindow::bubbleLine()
 {
+    disconnect(this->pm, SIGNAL(ovalueChanged(float)), this, SLOT(redisplayosurface(float)));
+    disconnect(this->pm, SIGNAL(bbvalueChanged(float)), this, SLOT(redisplaybsurface(float)));
+    disconnect(this->pm, SIGNAL(ovalueChanged(float)), this, SLOT(redisplayoline(float)));
+    //disconnect(this->pm, SIGNAL(bbvalueChanged(float)), this, SLOT(redisplaybline(float)));
+    connect(this->pm, SIGNAL(bbvalueChanged(float)), this, SLOT(redisplaybline(float)));
     QLinkedList<QVector3D> ap;
     for(int i=0; i<contour.size(); i++)
     {
@@ -86,16 +101,82 @@ void MainWindow::bubbleLine()
 
 void MainWindow::ordinarySurface()
 {
+    //disconnect(this->pm, SIGNAL(ovalueChanged(float)), this, SLOT(redisplayosurface(float)));
+    disconnect(this->pm, SIGNAL(bbvalueChanged(float)), this, SLOT(redisplaybsurface(float)));
+    disconnect(this->pm, SIGNAL(ovalueChanged(float)), this, SLOT(redisplayoline(float)));
+    disconnect(this->pm, SIGNAL(bbvalueChanged(float)), this, SLOT(redisplaybline(float)));
+    connect(this->pm, SIGNAL(ovalueChanged(float)), this, SLOT(redisplayosurface(float)));
     QLinkedList<QVector3D> ap;
     this->surfbs.inputData(contour);
+    this->surfbs.approxSurface();
     this->surfbs.ordinarySurface(ap);
     this->glf->setPoint(ap);
+
 }
 
 void MainWindow::bubbleSurface()
 {
+    disconnect(this->pm, SIGNAL(ovalueChanged(float)), this, SLOT(redisplayosurface(float)));
+   // disconnect(this->pm, SIGNAL(bbvalueChanged(float)), this, SLOT(redisplaybsurface(float)));
+    disconnect(this->pm, SIGNAL(ovalueChanged(float)), this, SLOT(redisplayoline(float)));
+    disconnect(this->pm, SIGNAL(bbvalueChanged(float)), this, SLOT(redisplaybline(float)));
+    connect(this->pm, SIGNAL(bbvalueChanged(float)), this, SLOT(redisplaybsurface(float)));
     QLinkedList<QVector3D> ap;
     this->surfbs.inputData(contour);
+    this->surfbs.approxSurface();
+    this->surfbs.bubbleSurface(ap);
+    this->glf->setPoint(ap);
+}
+
+void MainWindow::showDialog()
+{
+    this->pm->show();
+}
+
+void MainWindow::redisplayoline(float osteps)
+{
+    linebs.setOsteps(osteps);
+    QLinkedList<QVector3D> ap;
+    for(int i=0; i<contour.size(); i++)
+    {
+        QVector<QVector3D> mp;
+        linebs.setPoint(contour[i]);
+        linebs.toleranceFitting(5.0);
+        linebs.ordinaryCurves(mp);
+        for(int k=0; k<mp.size(); k++)
+            ap.push_back(mp[k]);
+    }
+    this->glf->setPoint(ap);
+}
+
+void MainWindow::redisplaybline(float distance)
+{
+    this->linebs.setDistance(distance);
+    QLinkedList<QVector3D> ap;
+    for(int i=0; i<contour.size(); i++)
+    {
+        QVector<QVector3D> mp;
+        linebs.setPoint(contour[i]);
+        linebs.toleranceFitting(5.0);
+        linebs.bubbleCurves(mp);
+        for(int k=0; k<mp.size(); k++)
+            ap.push_back(mp[k]);
+    }
+    this->glf->setPoint(ap);
+}
+
+void MainWindow::redisplayosurface(float osteps)
+{
+    QLinkedList<QVector3D> ap;
+    this->surfbs.setOsteps(osteps);
+    this->surfbs.ordinarySurface(ap);
+    this->glf->setPoint(ap);
+}
+
+void MainWindow::redisplaybsurface(float distance)
+{
+    QLinkedList<QVector3D> ap;
+    this->surfbs.setDistance(distance);
     this->surfbs.bubbleSurface(ap);
     this->glf->setPoint(ap);
 }

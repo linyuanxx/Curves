@@ -9,7 +9,8 @@ LineSpline::LineSpline()
     this->n = 3;
     this->p = 3;
     this->MinSrcN = 3;
-    this->_distance = 5.1;
+    this->_distance = 5.0;
+    this->_osteps = 0.01;
 }
 
 void LineSpline::setPoint(const QVector<QVector3D> &line)
@@ -25,6 +26,16 @@ void LineSpline::setKnot(const QVector<float> kt, int np)
     this->_kt.clear();
     this->_kt = kt;
     this->n = np;
+}
+
+void LineSpline::setOsteps(float tep)
+{
+    this->_osteps = tep;
+}
+
+void LineSpline::setDistance(float dis)
+{
+    this->_distance = dis;
 }
 
 void LineSpline::getControlPoints(QVector<QVector3D> &cpt)
@@ -258,7 +269,7 @@ void LineSpline::ordinaryCurves(QVector<QVector3D> &ap)
         return;
     float x,y,z;
     QVector<float> Ni;
-    for(float s=0.0; s <= 1.0; s+= 0.01)
+    for(float s=0.0; s <= 1.0; s+= _osteps)
     {
         this->calNi(s, Ni);
         x = y = z = 0.f;
@@ -309,6 +320,7 @@ void LineSpline::bubblePointOnCurves(float s1, float s2)
 
 void LineSpline::bubbleCurves(QVector<QVector3D> &ap)
 {
+    ap.clear();
     ap.push_back(pointOnCurves(0.f));
     this->bubblePointOnCurves(0.f, 1.f);
     for(int i=0; i<_ap.size(); i++)

@@ -2,7 +2,7 @@
 //#include "widget.h"
 #include "glform.h"
 #include "mainwindow.h"
-
+#include "pmdialog.h"
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -15,7 +15,8 @@ int main(int argc, char *argv[])
 //    glf.setPoint(pt);
 //    glf.show();
 
-
+//   PmDialog pm;
+//   pm.show();
 
     MainWindow mw;
     mw.show();

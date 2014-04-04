@@ -17,12 +17,16 @@ public:
 
     void inputData(QVector<QVector<QVector3D> > &sp);
 
+    // approximation function;
+     void approxSurface();
+    // parameter set;
+     void setDistance(float dis);
+     void setOsteps(float tep);
     //output all surface points;
     void ordinarySurface(QLinkedList<QVector3D> &ap);
     void bubbleSurface(QLinkedList<QVector3D> &ap);
 
 private:
-    void approxSurface();
     void statisticSurface();
 
     //bubble algrithm
@@ -41,6 +45,8 @@ private:
     float _numbers;   //顶点数最大下标值；
     LineSpline linefunction;  //线条拟合；
 
+    float _osteps;
+    float _distance;
     //bubble output data;
     QVector<QVector3D> _bbv;
 };

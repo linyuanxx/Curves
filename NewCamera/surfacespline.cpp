@@ -1,10 +1,13 @@
 #include "surfacespline.h"
 #include <QMap>
 #include <QDebug>
+#include <cmath>
 SurfaceSpline::SurfaceSpline()
 {
     this->_tolerance = 5.f;
     this->_numbers = 3;
+    this->_osteps = 0.01;
+    this->_distance = 5.f;
 }
 
 void SurfaceSpline::inputData(QVector<QVector<QVector3D> > &sp)
@@ -12,6 +15,17 @@ void SurfaceSpline::inputData(QVector<QVector<QVector3D> > &sp)
     this->_sp.clear();
     this->_sp = sp;
 }
+
+void SurfaceSpline::setOsteps(float tep)
+{
+    this->_osteps = tep;
+}
+
+void SurfaceSpline::setDistance(float dis)
+{
+    this->_distance = dis;
+}
+
 //曲面拟合
 /*
   *取横向拟合出来的第一条曲线作为 横向的标准节点矢量， 及后面的拟合曲线精度不去考虑，
@@ -89,14 +103,15 @@ void SurfaceSpline::statisticSurface()
 
 void SurfaceSpline::ordinarySurface(QLinkedList<QVector3D> &ap)
 {
-    this->approxSurface();
+    ap.clear();
+    //this->approxSurface();
     QVector<float> dvm;
     QVector<float> dhm;
-    for(float sv=0.f; sv <= 1.f; sv += 0.01f)
+    for(float sv=0.f; sv <= 1.f; sv += _osteps)
     {
         linefunction.setKnot(this->_vkt, this->_vcp.size()-1);
         linefunction.calNi(sv,dvm);
-        for(float sh=0.f; sh <= 1.f; sh += 0.01f)
+        for(float sh=0.f; sh <= 1.f; sh += _osteps)
         {
             linefunction.setKnot(this->_hkt, this->_vcp.at(0).size()-1);
             linefunction.calNi(sh, dhm);
@@ -153,15 +168,15 @@ void SurfaceSpline::BoxDiv(CenterBox cb)
     float length[4];
     float mlength = 32767.f;
     QVector3D lev;
-    for(int i=1; i<4; i++)
+    for(int i=1; i<5; i++)
     {
         lev = vertice[i]-vertice[i-1];
         length[i-1] = lev.length();
         if(length[i-1] < mlength)
             mlength = length[i-1];
     }
-    // qDebug()<<"LLL: "<<_bbv.size();
-    if(mlength < 1.0)return;
+    //qDebug()<<"LLL: "<<_bbv.size()<<mlength;
+    if(mlength < _distance || fabs(mlength - 32767.f) < 0.1)return;
     else
     {
         BoxDiv(CenterBox(cb.ld, cb.getCenter())); //ld
@@ -177,10 +192,11 @@ void SurfaceSpline::BoxDiv(CenterBox cb)
 void SurfaceSpline::bubbleSurface(QLinkedList<QVector3D> &ap)
 {
     ap.clear();
-    this->approxSurface();
-    qDebug()<<_bbv.size();
+    _bbv.clear();
+  //  this->approxSurface();
+   // qDebug()<<_bbv.size();
     this->BoxDiv(CenterBox(Point(0,0), Point(1.f, 1.f)));
-
     for(int i=0; i<_bbv.size(); i++)
         ap.push_back(_bbv[i]);
+
 }

@@ -127,7 +127,7 @@ void GLForm::resizeGL(int w, int h)
 
     float aspectRatio;
     const float zNear = 0.1; //1
-    const float zFar = 2000; //2
+    const float zFar = 3000; //2
     const float fieldOfView = 60.0; //3
     GLfloat size;
     //CGRect frame = [[UIScreen mainScreen] bounds]; //4
@@ -171,7 +171,7 @@ void GLForm::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    glTranslatef( hSteps ,  vSteps , -10+numSteps );
+    glTranslatef( hSteps ,  vSteps , -1500+numSteps );
     glTranslatef(eyex, eyey, -eyez);
     // gluLookAt(1.0, 1.0,1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
